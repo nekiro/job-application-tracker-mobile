@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import axios from 'axios';
 import { API_URL } from '@env';
+axios.defaults.baseURL = API_URL;
 import { UserContextWrapper } from './hooks/useUser';
 
 import LoginScreen from './views/login';
@@ -20,8 +21,6 @@ const theme = {
     tertiary: '#a1b2c3',
   },
 };
-
-axios.defaults.baseURL = API_URL;
 
 const Stack = createNativeStackNavigator();
 
