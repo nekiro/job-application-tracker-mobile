@@ -1,11 +1,16 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, SafeAreaView, useCallback } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../hooks/useUser';
 import { Button } from 'react-native-paper';
+import axios from 'axios';
+import SectionCarousel from '../components/SectionCarousel';
 
 export default function HomeScreen({ route, navigation }) {
   const { user, setUser } = useUser();
+  const [categories, setCategories] = useState([]);
+  const controller = new AbortController();
 
   useEffect(() => {
     if (route.params?.resetNavigation) {
@@ -15,12 +20,29 @@ export default function HomeScreen({ route, navigation }) {
       });
     }
 
-    if (!user) {
-      navigation.navigate('Login');
-    }
-  }, [route]);
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(`/users/${user.id}/categories`, {
+          headers: {
+            Authorization: `Bearer ${user.token.value}`,
+          },
+          signal: controller.signal,
+        });
 
-  const logOut = () => {
+        setCategories(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchCategories();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  const logout = () => {
     setUser(null);
     navigation.navigate('Login');
   };
@@ -31,15 +53,19 @@ export default function HomeScreen({ route, navigation }) {
 
   return (
     <>
-      <StatusBar style='light'></StatusBar>
-      <View style={styles.container}>
+      <StatusBar style='dark'></StatusBar>
+      <SafeAreaView style={styles.container}>
         <Text>
           Welcome, {user.firstName} {user.lastName}
         </Text>
-        <Button mode='contained' dark={true} onPress={logOut}>
+        <Button mode='contained' dark={true} onPress={logout}>
           Logout
         </Button>
-      </View>
+        <SectionCarousel
+          containerCustomStyle={{ marginTop: 50, flexGrow: 1 }}
+          data={categories}
+        />
+      </SafeAreaView>
     </>
   );
 }
@@ -47,7 +73,6 @@ export default function HomeScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
   },
 });

@@ -1,3 +1,4 @@
+import React from 'react';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -26,16 +27,18 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <UserContextWrapper>
-      <NavigationContainer>
-        <PaperProvider theme={theme}>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='Login' component={LoginScreen} />
-            <Stack.Screen name='Register' component={RegisterScreen} />
-            <Stack.Screen name='Home' component={HomeScreen} />
-          </Stack.Navigator>
-        </PaperProvider>
-      </NavigationContainer>
-    </UserContextWrapper>
+    <React.StrictMode>
+      <UserContextWrapper>
+        <NavigationContainer>
+          <PaperProvider theme={theme}>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name='Login' component={LoginScreen} />
+              <Stack.Screen name='Register' component={RegisterScreen} />
+              <Stack.Screen name='Home' component={HomeScreen} />
+            </Stack.Navigator>
+          </PaperProvider>
+        </NavigationContainer>
+      </UserContextWrapper>
+    </React.StrictMode>
   );
 }

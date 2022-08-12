@@ -25,6 +25,7 @@ export default function LoginScreen({ navigation }) {
     setLoading(true);
     try {
       const res = await axios.post('/auth/sign-in', values);
+
       setUser({
         token: { value: res.data.token, expiresAt: res.data.expiresAt },
         ...res.data.user,
@@ -32,9 +33,8 @@ export default function LoginScreen({ navigation }) {
       navigation.navigate('Home', { resetNavigation: true });
     } catch (err) {
       Alert.alert("Email and/or password doesn't match.");
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
